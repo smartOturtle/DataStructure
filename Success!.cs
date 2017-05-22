@@ -2,24 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 public class Program {
-    static Dictionary<long, long> dic;
+    static Dictionary<string, int> dic;
     static void Input() {
         int nub = int.Parse(Console.ReadLine());
-        dic = new Dictionary<long,long>(nub * 2);
+        dic = new Dictionary<string,int>(nub * 2);
         for (int i = 0; i < nub; i++) {
             string[] s = Console.ReadLine().Split(' ');
             for (int j = 0; j < s.Length; j++) {
-                long temp = long.Parse(s[j]);
-                if (dic.ContainsKey(temp)) dic[temp]++;
-                else dic.Add(temp, 1);
+                if (dic.ContainsKey(s[j])) dic[s[j]]++;
+                else dic.Add(s[j], 1);
             }
         }
     }
     static void Main(string[] args) {
         Input();
-        var a = new Dictionary<long, long>();
+        var a = new Dictionary<string, int>();
+        int MaxTime = 2;
         foreach (var item in dic) {
-           long MaxTime = 2;
             if(item.Value>=MaxTime) {
                 if (item.Value > MaxTime) {
                     a.Clear();
@@ -30,7 +29,7 @@ public class Program {
         }
         var b = a.First();
         foreach (var item in a) {
-            if (b.Key > item.Key) b = item;
+            if (b.Key.CompareTo( item.Key)==1) b = item;
         }
         Console.Write(b.Key + " " + b.Value);
         if (a.Count > 1) Console.WriteLine(" "+a.Count);
