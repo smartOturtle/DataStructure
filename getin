@@ -1,0 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+public sealed class Program {
+    class MyHashtable {
+        Int32[] collection;
+        public MyHashtable(Int32 num) {
+            collection = new int[FindMinPrime(num)] ;
+        }
+        int Hash(int num) {
+            int index= num % collection.Length;
+            if (collection[index] == 0|| collection[index] == num) collection[index] = num;
+            else {
+                for (int i = 1; i < 101; i++) {
+                    int temp = (index + i * i) % collection.Length;
+                    if (collection[temp] == 0|| collection[temp] == num) {
+                        index =temp;
+                        break;
+                    }
+                }
+            }
+            return index;
+        }
+        public void Add(int num) {
+            int index = Hash(num);
+            if (collection[index] == 0) {
+                collection[index] = num;
+            }
+        }
+        public int Find(int num) {
+            if (collection[Hash(num)] != num) return -1;
+            else return Hash(num);
+        }
+        static int FindMinPrime(Int32 num) {
+            if (num == 2||num==1) return num;
+            int i;
+            for (i = num;; i++) {
+                Boolean Flag = true;
+                for (int j = 2; j <= Math.Sqrt(num); j++) {
+                    if(i%j==0) {
+                        Flag = false;
+                        break;
+                    }
+                }
+                if (Flag) break;
+            }
+            return i;
+        }
+    }
+    static void Main(string[] args) {
+        string[] s0 = Console.ReadLine().Split(' ');
+        string[] s1 = Console.ReadLine().Split(' ');
+        MyHashtable hashtable = new MyHashtable(int.Parse(s0[0]));
+        foreach (var item in s1) {
+            hashtable.Add(int.Parse(item));
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i=0;i<s1.Length;i++) {
+            int tag = hashtable.Find(int.Parse(s1[i]));
+            if (tag == -1) sb.Append("- ");
+            else sb.Append(tag + " ");
+        }
+        Console.WriteLine(sb.ToString().Remove(sb.Length - 1));
+    }
+}
