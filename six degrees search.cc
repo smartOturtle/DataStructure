@@ -8,30 +8,26 @@ Gragh gragh;
 vector<bool> vertexBox;
 void bfs(int i)
 {
-	int layer=0, last=i,tail=0;
+	int layer = 0, last = i;
 	queue<int> q;
 	q.push(i);
-	vertexBox[i]	= true;
-	while (!q.empty())
+	vertexBox[i] = true;
+	while (layer<6&&!q.empty())
 	{
-		auto temp = q.front();
-		q.pop();	
-		for(auto x:gragh[temp])
+		for (const auto& x : gragh[q.front()])
 		{
-			if(!vertexBox[x])
+			if (!vertexBox[x])
 			{
 				vertexBox[x] = true;
 				q.push(x);
-				tail = x;
 			}
-			
 		}
-		if (temp== last)
+		if (q.front() == last)
 		{
 			layer++;
-			last = tail;
+			last = q.back();
 		}
-		if(layer==6)break;
+		q.pop();
 	}
 }
 int main()
@@ -44,13 +40,13 @@ int main()
 	{
 		int one, other;
 		cin >> one >> other;
-		gragh[one-1].push_back(other-1);
+		gragh[one - 1].push_back(other - 1);
 		gragh[other - 1].push_back(one - 1);
 	}
 	for (int i = 0; i < vertexCount; ++i)
 	{
 		bfs(i);
-		int relationCount=0;
+		int relationCount = 0;
 		for (auto x : vertexBox)
 		{
 			if (x)relationCount++;
