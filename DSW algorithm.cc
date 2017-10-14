@@ -58,14 +58,8 @@ private:
 			while (root->left!=nullptr){root = root->left;}
 			while (parent->right != nullptr)
 			{
-				if (parent->right->left != nullptr)
-				{
-					parent->right = parent->right->LeftRotation();
-				}
-				else
-				{
-					parent = parent->right;
-				}
+				if (parent->right->left != nullptr)parent->right = parent->right->LeftRotation();
+				else parent = parent->right;
 			}
 			delete tmp;
 			return root;
@@ -85,6 +79,7 @@ private:
 			auto temp=root;
 			for (auto i = 1; i < n; ++i)
 			{
+				if(temp->right==nullptr)break;
 				temp->right = temp->right->RightRotation();
 				temp = temp->right;
 			}
