@@ -117,7 +117,7 @@ private:
 		}
 		Node* Balance(int size)
 		{
-			int difference = pow(2, floor(log(size + 1) / log(2))) - 1;;
+			int difference = pow(2, floor(log(size + 1) / log(2))) - 1;
 			auto root = ToRightList()->RightRotationN(size-difference);
 			while (difference>1)
 			{
