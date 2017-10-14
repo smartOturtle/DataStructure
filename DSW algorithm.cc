@@ -11,9 +11,12 @@ public:
 	Tree(){}
 	void Insert(int data)
 	{
-		if (IsEmpty())root_.reset(new Node(data));
-		else{root_->Insert(data);}		
-		size_++;
+		if (IsEmpty())
+		{
+			root_.reset(new Node(data));
+			size_++;
+		}
+		else if(root_->Insert(data))size_++;
 	}
 	bool IsEmpty()const
 	{
@@ -70,7 +73,7 @@ private:
 		Node* RightRotation()
 		{
 			if (right == nullptr)return this;
-			auto temp = right;
+			const auto temp = right;
 			right = temp->left;
 			temp->left = this;
 			return temp;
@@ -80,7 +83,7 @@ private:
 			if (n < 1)return this;
 			const auto root = RightRotation();
 			auto temp=root;
-			for (int i = 1; i < n; ++i)
+			for (auto i = 1; i < n; ++i)
 			{
 				temp->right = temp->right->RightRotation();
 				temp = temp->right;
@@ -89,23 +92,32 @@ private:
 		}
 		Node* LeftRotation()
 		{
-			auto tmp = left;
+			const auto tmp = left;
 			left = tmp->right;
 			tmp->right = this;
 			return tmp;
 		}
-		void Insert(int data)
+		bool Insert(int data)
 		{
 			if (data > this->data)
 			{
-				if (right == nullptr)right = new Node(data);
-				else { right->Insert(data); }
+				if (right == nullptr)
+				{
+					right = new Node(data);
+					return true;
+				}
+				return right->Insert(data);
 			}
-			else if (data < this->data)
+			if (data < this->data)
 			{
-				if (left == nullptr)left = new Node(data);
-				else	{left->Insert(data);}
+				if (left == nullptr)
+				{
+					left = new Node(data);
+					return true;
+				}
+				return left->Insert(data);
 			}
+			return false;
 		}
 		Node* Balance(int size)
 		{
