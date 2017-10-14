@@ -19,7 +19,7 @@ public:
 	{
 		return root_ == nullptr;
 	}
-	void Traversal()const
+	void LevelOrderTraversal()const
 	{
 		if(root_==nullptr)return;
 		queue<Node*> q;
@@ -46,7 +46,7 @@ private:
 		Node* left{};
 		Node* right{};
 		explicit  Node(int d) :data(d){}
-		Node* ToList()
+		Node* ToRightList()
 		{
 			auto parent = new Node(1);
 			const auto tmp = parent;
@@ -58,7 +58,6 @@ private:
 				if (parent->right->left != nullptr)
 				{
 					parent->right = parent->right->LeftRotation();
-					parent=parent->right ;
 				}
 				else
 				{
@@ -70,10 +69,23 @@ private:
 		}
 		Node* RightRotation()
 		{
+			if (right == nullptr)return this;
 			auto temp = right;
 			right = temp->left;
 			temp->left = this;
 			return temp;
+		}
+		Node* RightRotationN(int n)
+		{
+			if (n < 1)return this;
+			const auto root = RightRotation();
+			auto temp=root;
+			for (int i = 1; i < n; ++i)
+			{
+				temp->right = temp->right->RightRotation();
+				temp = temp->right;
+			}
+			return root;
 		}
 		Node* LeftRotation()
 		{
@@ -97,22 +109,13 @@ private:
 		}
 		Node* Balance(int size)
 		{
-			auto root = ToList()->RightRotation();
-			auto tmp = root;
-			int difference = pow(2, ceil(log2(size + 1)) - 1);
-			for (int i = 1; i < size-difference; ++i)
-			{
-				tmp->right = tmp->right->RightRotation();
-				tmp = tmp->right;
-			}
-			/*while (difference>1)
+			int difference = pow(2, floor(log(size + 1) / log(2))) - 1;;
+			auto root = ToRightList()->RightRotationN(size-difference);
+			while (difference>1)
 			{
 				difference /=2;
-				
-			}*/
-			root = root->RightRotation();
-			root->right = root->right->RightRotation();
-
+				root = root->RightRotationN(difference);
+			}
 			return root;
 		}
 	};
@@ -142,6 +145,5 @@ int main()
 		tree.Insert(data);
 	}
 	tree.Balance();
-	tree.Traversal();
-
+	tree.LevelOrderTraversal();
 }
