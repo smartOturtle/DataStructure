@@ -42,7 +42,7 @@ public:
 		root_.release();
 		root_.reset(temp);
 	}
-	int GetSize(){return size_;}
+	int GetSize()const{return size_;}
 private:
 	struct Node
 	{
