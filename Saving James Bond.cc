@@ -51,8 +51,8 @@ int main()
 			if(iter.empty())break;
 			if(iter!=gragh[i]&&GetDistance(gragh[i].front(),iter.front())<=stepSize)
 			{
-				iter.push_back(*gragh[i].begin());
-				gragh[i].push_back(*iter.begin());
+				iter.push_back(gragh[i].front());
+				gragh[i].push_back(iter.front());
 			}
 		}
 	}
