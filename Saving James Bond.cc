@@ -6,11 +6,11 @@
 using namespace std;
 using Point = pair<int, int>;
 using Gragh = vector<list<Point>>;
-double GetDistance(Point p1, Point p2)
+double GetDistance(const Point& p1, const Point& p2)
 {
 	return sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2));
 }
-int getIndex(Gragh g,const Point& p)
+int getIndex(const Gragh& g,const Point& p)
 {
 	for (int i = 0; i < g.size(); ++i)
 	{
@@ -19,7 +19,7 @@ int getIndex(Gragh g,const Point& p)
 	cout << "error";
 	return -1;
 }
-void BFS(Gragh g,int stepSize)
+void BFS(const Gragh& g,int stepSize)
 {
 	vector<bool> visitedVertex(g.size(), false);
 	queue<int> q;
@@ -68,4 +68,3 @@ int main()
 	gragh[vertexCount].swap(gragh[0]);
 	BFS(gragh, stepSize);
 }
-//forward_list 只有头结点所以只能以O(1)时间插在头节点后方而无法插在最后
