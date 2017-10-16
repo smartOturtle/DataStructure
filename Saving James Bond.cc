@@ -10,7 +10,7 @@ double GetDistance(const Point& p1, const Point& p2)
 {
 	return sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2));
 }
-int getIndex(const Gragh& g,const Point& p)
+int GetIndex(const Gragh& g,const Point& p)
 {
 	for (int i = 0; i < g.size(); ++i)
 	{
