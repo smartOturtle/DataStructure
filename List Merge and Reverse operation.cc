@@ -26,7 +26,7 @@ public:
 	{
 		if(list.Empty())return;
 		auto iter = &head_, listTemp = list.head_.next, thisTemp = head_.next;
-		head_.next = nullptr;
+		list.head_.next = nullptr;
 		while (listTemp&&thisTemp)
 		{
 			if(listTemp->data>thisTemp->data)
