@@ -22,7 +22,7 @@ class List
 {
 	Node head_{ 0 };
 public:
-	void Merge(List list)
+	void Merge(List& list)
 	{
 		if(list.Empty())return;
 		auto iter = &head_, listTemp = list.head_.next, thisTemp = head_.next;
