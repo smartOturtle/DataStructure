@@ -1,27 +1,34 @@
 #include <iostream>
 #include <algorithm>
 using namespace std;
-struct Node
-{
-	int data;
-	Node* next{};
-	explicit  Node(int d):data(d){}
-	Node& operator ++()
-	{
-		*this = *this->next;
-		return *this;
-	}
-	Node operator ++(int)//后置的自增自减运算符应该以传值的形式返回
-	{
-		auto temp = *this;
-		*this = *this->next;
-		return temp;
-	}
-};
 class List
 {
+	struct Node
+	{
+		int data;		
+		explicit  Node(int d) :data(d) {}
+		Node* next{};		
+	};	
 	Node head_{ 0 };
 public:
+	struct iterator
+	{
+		iterator():iter(nullptr){}
+		explicit iterator(Node* n) { iter = n; }
+		iterator operator ++()
+		{
+			iter = iter->next;
+			return *this;
+		}
+		int& operator *() const
+		{
+			return iter->data;
+		}
+		bool operator ==(iterator one) const { return one.iter == iter; }
+		bool operator !=(iterator one) const { return one.iter != iter; }
+	private:
+		Node* iter;
+	};
 	void Merge(List& list)
 	{
 		if(list.Empty())return;
@@ -64,16 +71,13 @@ public:
 		head_.next->next = temp;
 	}
 	bool Empty()const { return head_.next==nullptr; }
-	Node* Front()
-	{
-		return head_.next;
-	}
+	iterator  begin() {return iterator(head_.next);}
+	iterator end() { return iterator(); }
 	~List()
 	{
 		auto iter = head_.next;
 		while (iter)
 		{
-			cout << iter->data;
 			auto temp = iter->next;
 			delete iter;
 			iter = temp;
