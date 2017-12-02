@@ -11,9 +11,11 @@ constexpr  Iterator PrevPosition(Iterator iter) { return --iter; }
 template<typename Iterator>
 constexpr  Iterator Offset(Iterator iter, int offset) { advance(iter, offset); return iter; }
 template<typename Iterator>
-void ShellSort(Iterator begin, Iterator end,
-	function<bool(typename  Iterator::value_type,
-		typename  Iterator::value_type)> pred = less<typename Iterator::value_type>())
+void ShellSort(Iterator begin, 
+	       Iterator end,
+	       function<bool(typename  Iterator::value_type,
+		             typename  Iterator::value_type)> pred = 
+	                     less<typename Iterator::value_type>())
 {
 	int k = 1,dist=distance(begin,end);
 	while (k * 3 < dist)k = k * 3 + 1;
