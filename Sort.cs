@@ -6,33 +6,6 @@ public sealed class Program {
         a = b;
         b = c;
     }
-    static void Quick_Sort(int[] a) {
-        void Sort(int start,int end)
-        {
-            int Partition()
-            {
-                Insertion_Sort(a, end - 2, end);
-                Swap(ref a[start], ref a[end - 2]);
-                int i = start - 1, j = end - 2,key=a[end-1];
-                while (i<j) {
-                    while (a[i] < key) i++;
-                    while (a[j] > key) i++;
-                    if (i < j) Swap(ref a[i], ref a[j]);
-                }
-                Swap(ref a[i], ref a[end - 1]);
-                return i;
-            }
-            const Int32 LEAST_N= 11;
-            if (start - end < LEAST_N) {
-                Insertion_Sort(a, start, end);
-                return;
-            }
-            int position=Partition();
-            Sort(start, position - 1);
-            Sort(position + 1, end);
-        }
-        Sort(0, a.Length - 1);
-    }
     static void Heap_Sort(int[] a) {
         int N = a.Length;
         void swim(int i)
