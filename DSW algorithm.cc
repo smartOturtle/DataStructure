@@ -1,157 +1,119 @@
+#define  _CRT_SECURE_NO_WARNINGS
+#include <vector>
+#include <functional>
 #include <iostream>
-#include <queue>
-#include <memory>
+#include <string>
+#include <deque>
+#include <algorithm>
 #include <cmath>
+#include <queue>
+#include <stack>
 using namespace std;
 
-class Tree
+struct Node
 {
-public:
-	Tree(Tree& tree) = delete;
-	Tree(){}
-	void Insert(int data)
-	{
-		if (IsEmpty())
-		{
-			root_.reset(new Node(data));
-			size_++;
-		}
-		else if(root_->Insert(data))size_++;
-	}
-	bool IsEmpty()const
-	{
-		return root_ == nullptr;
-	}
-	void LevelOrderTraversal()const
-	{
-		if(root_==nullptr)return;
-		queue<Node*> q;
-		q.push(root_.get());
-		cout << root_->data;
-		while (!q.empty())
-		{
-			if (q.front()->left != nullptr)q.push(q.front()->left);
-			if (q.front()->right != nullptr)q.push(q.front()->right);
-			q.pop();
-			if(!q.empty())cout <<" "<< q.front()->data;
-		}
-	}
-	void Balance()
-	{
-		const auto temp = root_->Balance(size_);
-		root_.release();
-		root_.reset(temp);
-	}
-	int GetSize()const{return size_;}
-private:
-	struct Node
-	{
-		int data;
-		Node* left{};
-		Node* right{};
-		explicit  Node(int d) :data(d){}
-		Node* ToRightList()
-		{
-			auto parent = new Node(1);
-			const auto tmp = parent;
-			parent->right = this;
-			auto root=this;
-			while (root->left!=nullptr){root = root->left;}
-			while (parent->right != nullptr)
-			{
-				if (parent->right->left != nullptr)parent->right = parent->right->LeftRotation();
-				else parent = parent->right;
-			}
-			delete tmp;
-			return root;
-		}
-		Node* RightRotation()
-		{
-			if (right == nullptr)return this;
-			const auto temp = right;
-			right = temp->left;
-			temp->left = this;
-			return temp;
-		}
-		Node* RightRotationN(int n)
-		{
-			if (n < 1)return this;
-			const auto root = RightRotation();
-			auto temp=root;
-			for (auto i = 1; i < n; ++i)
-			{
-				if(temp->right==nullptr)break;
-				temp->right = temp->right->RightRotation();
-				temp = temp->right;
-			}
-			return root;
-		}
-		Node* LeftRotation()
-		{
-			const auto tmp = left;
-			left = tmp->right;
-			tmp->right = this;
-			return tmp;
-		}
-		bool Insert(int data)
-		{
-			if (data > this->data)
-			{
-				if (right == nullptr)
-				{
-					right = new Node(data);
-					return true;
-				}
-				return right->Insert(data);
-			}
-			if (data < this->data)
-			{
-				if (left == nullptr)
-				{
-					left = new Node(data);
-					return true;
-				}
-				return left->Insert(data);
-			}
-			return false;
-		}
-		Node* Balance(int size)
-		{
-			int difference = pow(2, floor(log(size + 1) / log(2))) - 1;
-			auto root = ToRightList()->RightRotationN(size-difference);
-			while (difference>1)
-			{
-				difference /=2;
-				root = root->RightRotationN(difference);
-			}
-			return root;
-		}
-	};
-	unique_ptr<Node,void(*)(Node*)> root_{nullptr,[](Node*p)
-	{
-		queue<Node*> q;
-		q.push(p);
-		while (!q.empty())
-		{
-			if (q.front()->left != nullptr)q.push(q.front()->left);
-			if (q.front()->right != nullptr)q.push(q.front()->right);
-			delete q.front();
-			q.pop();
-		}
-	}};
-	int size_{};
+    int data;
+    Node* left=nullptr;
+    Node* right=nullptr;
+    explicit Node(int data):data(data){}
+    Node* LeftRotate()
+    {
+        auto parent = left;
+        left = parent->right;
+        parent->right = this;
+        return parent;
+    }
+    Node* RightRotate()
+    {
+        auto parent = right;
+        right = parent->left;
+        parent->left = this;
+        return parent;
+    }
+    Node* RightRotateN(int n)
+    {
+        if (n == 0)return this;//check edge condition
+        auto parent = RightRotate();
+        auto iter = parent;
+        for (int i = 1; i < n; ++i)
+        {
+            if(iter->right==nullptr)break;
+            iter->right = iter->right->RightRotate();
+            iter = iter->right;
+        }
+        return parent;
+    }
 };
-int main()
+void Insert(Node*& n, int value)
 {
-	int nodeCount;
-	cin >> nodeCount;
-	Tree tree;
-	for (int i = 0; i < nodeCount; ++i)
-	{
-		int data;
-		cin >> data;
-		tree.Insert(data);
-	}
-	tree.Balance();
-	tree.LevelOrderTraversal();
+    if(n==nullptr)
+    {
+        n = new Node(value);
+        return;
+    }
+    if (n->data < value)Insert(n->right, value);
+    else Insert(n->left, value);
+}
+struct Tree
+{
+    int size = 0;
+    Node* root = nullptr;
+    void Insert(int value)
+    {
+        ::Insert(root, value);
+        size++;
+    }
+    bool Empty()const { return root==nullptr; }
+    void ToRightList()
+    {
+        Node n(1);
+        auto iter = &n;
+        iter->right = root;
+        while (root->left != nullptr) { root = root->left; }
+        while (iter->right != nullptr)
+        {
+            if (iter->right->left != nullptr)iter->right = iter->right->LeftRotate();
+            else iter = iter->right;
+        }
+    }
+    void Balance()
+    {
+        int difference = pow(2, floor(log2(size+1))) - 1;
+        ToRightList();
+        root=root->RightRotateN(size - difference);
+        while (difference>1)
+        {
+            difference /= 2;
+            root = root->RightRotateN(difference);
+        }
+    }
+    void LevelOrderTraversal()const
+    {
+        if (root == nullptr)return;
+        queue<Node*> q;
+        q.push(root);
+        cout << root->data;
+        while (!q.empty())
+        {
+            if (q.front()->left != nullptr)q.push(q.front()->left);
+            if (q.front()->right != nullptr)q.push(q.front()->right);
+            q.pop();
+            if (!q.empty())cout << " " << q.front()->data;
+        }
+    }
+};
+
+int main(int argc, char* argv[])
+{
+    int nodeSize;
+    cin >> nodeSize;
+    Tree tree;
+    for (int i = 0; i < nodeSize; ++i)
+    {
+        int value;
+        cin >> value;
+        tree.Insert(value);
+    }
+    tree.Balance();
+    tree.LevelOrderTraversal();
 }
