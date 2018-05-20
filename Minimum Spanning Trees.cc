@@ -1,63 +1,70 @@
 #include <iostream>
+#include <algorithm>
 #include <queue>
 #include <vector>
+#include <string>
 #include <functional>
 using namespace std;
 
-struct Set
+struct UnionFindSet
 {
-	bool Union(int i,int j)
-	{
-		int rootI = Find(i), rootJ = Find(j);
-		if (rootI == rootJ)return false;
-		if (set[rootI] < set[rootJ])
-		{
-			set[rootJ] += set[rootI];
-			set[rootI] = rootJ;
-		}
-		else
-		{
-			set[rootI] += set[rootJ];
-			set[rootJ] = rootI;
-		}
-		return true;
-	}
-	int Find(int i)
-	{
-		if (set[i] < 0)return i;
-		return  set[i]= Find(set[i]);
-	}
-	vector<int> set;
+    int Find(int idx)
+    {
+        if (container_[idx] < 0)return idx;
+        return container_[idx] = Find(container_[idx]);
+    }
+    void Connect(int lhs,int rhs)
+    {
+        auto lhsRoot = Find(lhs), rhsRoot = Find(rhs);
+        if(lhsRoot==rhsRoot)return;
+        if (lhsRoot > rhsRoot)swap(lhsRoot, rhsRoot);
+        container_[lhsRoot] += container_[rhsRoot];
+        container_[rhsRoot] = lhsRoot;
+    }
+    bool IsConnected(int lhs,int rhs)
+    {
+        auto lhsRoot = Find(lhs), rhsRoot = Find(rhs);
+        return lhsRoot == rhsRoot;
+    }
+    int ConnectedSetSize()const
+    {
+        return count_if(container_.begin(), container_.end(), 
+            [](int value) { return value < 0; });
+    }
+    explicit UnionFindSet(int size):container_(size,-1){}
+    vector<int> container_;
 };
-using Edge = pair<int, pair<int, int>>;
-priority_queue<Edge,vector<Edge>,greater<Edge>> heap;
-int Kruskal(int villageCount)
+
+struct Road
 {
-	int cnt{},totalPrice{};
-	Set s;
-	s.set.assign(villageCount, -1);
-	while (cnt<villageCount-1&&!heap.empty())
-	{
-		auto indexPair = heap.top().second;
-		if (s.Union(indexPair.first, indexPair.second))
-		{
-			cnt++;
-			totalPrice += heap.top().first;
-		}
-		heap.pop();
-	}
-	if (cnt < villageCount - 1)return -1;
-	return totalPrice;
-}
+    int from;
+    int to;
+    int cost;
+    Road(int from,int to,int cost):from(from),to(to),cost(cost){}
+    bool operator<(const Road& road)const { return cost < road.cost; }
+};
 int main(int argc, char* argv[])
 {
-	int villageCount, roadCount;
-	cin >> villageCount >> roadCount;
-	for (int i = 0; i < roadCount; ++i)
-	{
-		int x, y, weight;
-		cin >> x >> y >> weight;
-		heap.push({ weight,{x-1,y-1} });
-	}
-	cout << Kruskal(villageCount);
+    int villageSize, edgeSize;
+    cin >> villageSize >> edgeSize;
+    vector<Road> roads;
+    for (int i = 0; i < edgeSize; ++i)
+    {
+        int from, to, cost;
+        cin >> from >> to >> cost;
+        roads.emplace_back(from-1, to-1, cost);
+    }
+    sort(roads.begin(), roads.end());
+    UnionFindSet ufset(villageSize);
+    int totalCost=0;
+    for (auto road : roads)
+    {
+        if (!ufset.IsConnected(road.from, road.to))
+        {
+            ufset.Connect(road.from, road.to);
+            totalCost += road.cost;
+        }
+    }
+    if (ufset.ConnectedSetSize() != 1)cout << -1;
+    else { cout << totalCost; }
 }
