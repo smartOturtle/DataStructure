@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
     queue<int> q;
     for (int i = 0; i < vertexSize; ++i)if (indegree[i] == 0)q.push(i);
     vector<int> earliest(vertexSize);
-    vector<int> latest(vertexSize, INT16_MAX);
+    vector<int> latest;
     for (int cnt = 0;; ++cnt)
     {
         if (q.empty())
         {
             if (cnt < vertexSize) { cout << "0"; return 0; }
             auto maxElem = max_element(earliest.begin(), earliest.end());
-            latest[maxElem - earliest.begin()] = *maxElem;
+            latest.resize(vertexSize, *maxElem);
             q.push(maxElem - earliest.begin());
             cout << *maxElem << '\n';
             break;
