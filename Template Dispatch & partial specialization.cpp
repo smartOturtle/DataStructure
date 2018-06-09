@@ -40,6 +40,13 @@ class Foo<T, enable_if_t<is_same_v<double, T>>>
 public:
 	Foo() { cout << "double"; }
 };
+template<typename T>
+decltype(auto) Func(T a)
+{
+    if constexpr (is_floating_point_v<T>) return 1;
+    else if constexpr (is_same_v<long, T>)return 2;
+    return 3;
+}
 int main(int argc, char* argv[])
 {
 	Foo<int> a;
