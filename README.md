@@ -29,3 +29,8 @@ def sliding_window(array, size):
     array = iter(array)
     return accumulate(array, lambda t, elm: t[1:] + (elm,), initial=tuple(islice(array, size)))
 ```
+在二维数组周围添加一圈
+``` python
+def add_cycle(a):
+    return [[0] * (len(a[0]) + 2)] + [[0] + row + [0] for row in a] + [[0] * (len(a[0]) + 2)]
+```
