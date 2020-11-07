@@ -6,7 +6,7 @@ def lower_bound(array, target):
     lo, hi = 0, len(array)
     while lo < hi:
         mid = (lo + hi) // 2
-        if array[mid] <= target:
+        if  target <= array[mid]:
             hi = mid
         else:
             lo = mid + 1
@@ -17,7 +17,7 @@ def upper_bound(array, target):
     lo, hi = 0, len(array)
     while lo < hi:
         mid = (lo + hi) // 2
-        if array[mid] < target:#唯一差别少个等号
+        if  target < array[mid]:#唯一差别少个等号
             hi = mid
         else:
             lo = mid + 1
